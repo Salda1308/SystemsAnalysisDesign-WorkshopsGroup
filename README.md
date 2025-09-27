@@ -20,4 +20,5 @@ Each component was then examined in terms of its sensitivity to change.
 Then, the potential effects of chaos and randomness were analyzed, considering both the stochastic nature of machine learning algorithms and the competitive dynamics imposed by the rules of participation.
 Finally, the analysis concluded with the identification of strengths and weaknesses, highlighting the elements that make the competition suitable for a systemic study.
 
-- **Final report:** [See PDF](Workshop 1/Workshop 1 Sweet Regression Competition.pdf)
+- **Final report:** [See PDF](Workshop%201/Workshop%201%20Sweet%20Regression%20Competition.pdf)
+
