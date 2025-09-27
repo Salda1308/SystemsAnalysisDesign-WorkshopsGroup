@@ -1,4 +1,4 @@
-# SystemsAnalysisDesign-WorkshopsGroup
+#  Systems analysis design workshops 
 # Analysis Workshops
 
 This repository contains the workshops developed during the course.
