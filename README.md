@@ -21,3 +21,6 @@ Then, the potential effects of chaos and randomness were analyzed, considering b
 Finally, the analysis concluded with the identification of strengths and weaknesses, highlighting the elements that make the competition suitable for a systemic study.
 
 - **Workshop 1 report:** [See PDF](Workshop%201/Workshop%201%20Sweet%20Regression%20Competition.pdf)
+
+## Workshop 2
+- **Workshop 2 report:**  [See PDF](https://github.com/Salda1308/SystemsAnalysisDesign-WorkshopsGroup/blob/main/Workshop_2_Design/Workshop2.pdf)
