@@ -6,6 +6,7 @@ The goal is to build a predictive framework capable of estimating chocolate sale
 
 This document extends the analytical findings from **Workshop #1**, transforming them into a structured system architecture, requirement set, and implementation plan.
 
+- **Workshop 2 report:**  [See PDF](https://github.com/Salda1308/SystemsAnalysisDesign-WorkshopsGroup/blob/main/Workshop_2_Design/Workshop2.pdf)
 ---
 
 ## Authors
