@@ -1,6 +1,6 @@
 # Sweet Regression Competition — Workshop 2
 
-## Overview
+
 This repository contains the design and system specification for the **Sweet Regression Competition** developed for *Chocolates 4U*.  
 The goal is to build a predictive framework capable of estimating chocolate sales in new regions based on marketing exposure, socio-economic indicators, and environmental factors.
 
