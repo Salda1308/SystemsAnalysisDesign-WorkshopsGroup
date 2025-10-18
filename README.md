@@ -23,4 +23,12 @@ Finally, the analysis concluded with the identification of strengths and weaknes
 - **Workshop 1 report:** [See PDF](Workshop%201/Workshop%201%20Sweet%20Regression%20Competition.pdf)
 
 ## Workshop 2
+
+- **Description:**
+
+Workshop 2: Sweet Regression Competition Analysis was developed as the second phase of the sales prediction project for Chocolates 4U, with the objective of designing a predictive system capable of estimating sales in new regions based on marketing data, socioeconomic, and environmental factors. Based on the analysis from Workshop 1, technical constraints, functional and non-functional requirements, and a modular architecture composed of six modules (ingestion, preprocessing, analysis, modeling, validation, and export) were defined, following systems engineering principles such as modularity, traceability, and feedback control.
+Sensitivity and chaos control mechanisms were also included, such as the use of fixed seeds, regularization, preprocessing standardization, and outlier detection.
+
+The implementation was defined as combining Python for data exploration and preprocessing and R for modeling and validation using linear and regularized regression techniques, employing error metrics (MAE) and overfitting control mechanisms.
+
 - **Workshop 2 report:**  [See PDF](https://github.com/Salda1308/SystemsAnalysisDesign-WorkshopsGroup/blob/main/Workshop_2_Design/Workshop2.pdf)
