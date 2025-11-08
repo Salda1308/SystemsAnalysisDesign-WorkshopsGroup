@@ -32,3 +32,28 @@ Sensitivity and chaos control mechanisms were also included, such as the use of 
 The implementation was defined as combining Python for data exploration and preprocessing and R for modeling and validation using linear and regularized regression techniques, employing error metrics (MAE) and overfitting control mechanisms.
 
 - **Workshop 2 report:**  [See PDF](https://github.com/Salda1308/SystemsAnalysisDesign-WorkshopsGroup/blob/main/Workshop_2_Design/Workshop2.pdf)
+
+
+
+## Workshop 3 – Robust Design and Quality Management  
+- **Description:**
+
+Workshop 3 focused on strengthening the predictive system’s architecture and integrating **quality assurance**, **risk management**, and **project governance** aligned with international engineering standards.
+
+This phase redefined the architecture into three main layers — **Data Processing**, **Training**, and **Presentation** — designed for **local execution**, **fault tolerance**, and **traceability**.
+
+Additionally, a formal **Quality and Risk Management Plan** was introduced, identifying potential risks (data corruption, dependency conflicts, overfitting, reproducibility loss) and proposing mitigation strategies under the frameworks of **ISO 9001:2015** (Quality Management Systems) and **CMMI** (Capability Maturity Model Integration).
+
+A **Project Management Plan** was also established, defining clear team roles and an iterative **Kanban-based workflow** emphasizing documentation integrity and process control.
+
+**Team Roles:**
+| Name | Role | Responsibility |
+|------|------|----------------|
+| **Samuel Aljure Bernal** | Analyst | Defines requirements and maintains system traceability. |
+| **Carlos Alberto Barriga Gámez** | Developer | Implements and maintains modular code structure. |
+| **David Santiago Aldana González** | Tester | Executes validation and reproducibility testing. |
+| **Juan Diego Álvarez Cristancho** | Manager | Coordinates project milestones and documentation. |
+
+This workshop consolidated the system into a reproducible and auditable framework, establishing a strong foundation for the upcoming **implementation and validation phase**.
+
+- **Workshop 3 report:** [See PDF](https://github.com/Salda1308/SystemsAnalysisDesign-WorkshopsGroup/blob/main/Workshop_3/Workshop_3.pdf)
