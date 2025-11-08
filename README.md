@@ -56,4 +56,4 @@ A **Project Management Plan** was also established, defining clear team roles an
 
 This workshop consolidated the system into a reproducible and auditable framework, establishing a strong foundation for the upcoming **implementation and validation phase**.
 
-- **Workshop 3 report:** [See PDF]([https://github.com/Salda1308/SystemsAnalysisDesign-WorkshopsGroup/blob/main/Workshop_3/Workshop_3.pdf](https://github.com/Salda1308/SystemsAnalysisDesign-WorkshopsGroup/blob/main/Workshop_3/Workshop3.pdf))
+- **Workshop 3 report:** [See PDF](https://github.com/Salda1308/SystemsAnalysisDesign-WorkshopsGroup/blob/main/Workshop_3/Workshop3.pdf)
