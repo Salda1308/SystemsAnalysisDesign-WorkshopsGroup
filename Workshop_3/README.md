@@ -81,14 +81,5 @@ Tasks are categorized as *To Do*, *In Progress*, *Under Review*, and *Completed*
 - Versioning via Git with milestone tagging.  
 - LaTeX-based technical reporting for formal documentation consistency.
 
----
 
-## Incremental Improvements Summary
-| Workshop | Focus | Outcome |
-|-----------|--------|----------|
-| **#1 – Systemic Analysis** | Defined inputs, processes, and system constraints; identified instability and chaos factors. |
-| **#2 – System Design** | Built modular architecture and requirement specification. |
-| **#3 – Robust Design & Quality Integration** | Added quality assurance, risk management, and project governance following ISO 9001 and CMMI. |
-
----
 
