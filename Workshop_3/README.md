@@ -3,7 +3,7 @@
 
 ---
 
-## Overview
+
 This repository documents **Workshop #3** of the *Chocolates 4U Predictive System* project, developed as part of the **Sweet Regression Competition** academic initiative.  
 The focus of this stage is the **refinement of the system architecture**, the integration of **quality and risk management mechanisms**, and the establishment of a formal **project management framework** aligned with engineering standards.
 
