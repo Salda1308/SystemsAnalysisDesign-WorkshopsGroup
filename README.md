@@ -35,7 +35,7 @@ The implementation was defined as combining Python for data exploration and prep
 
 
 
-## Workshop 3 – Robust Design and Quality Management  
+## Workshop 3
 - **Description:**
 
 Workshop 3 focused on strengthening the predictive system’s architecture and integrating **quality assurance**, **risk management**, and **project governance** aligned with international engineering standards.
