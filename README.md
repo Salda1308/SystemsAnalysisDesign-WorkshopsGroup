@@ -57,3 +57,13 @@ A **Project Management Plan** was also established, defining clear team roles an
 This workshop consolidated the system into a reproducible and auditable framework, establishing a strong foundation for the upcoming **implementation and validation phase**.
 
 - **Workshop 3 report:** [See PDF](https://github.com/Salda1308/SystemsAnalysisDesign-WorkshopsGroup/blob/main/Workshop_3/Workshop3.pdf)
+
+## Workshop 4
+- **Description:**
+
+ Workshop 4 was developed as the fourth phase of the sales forecasting project for Chocolates 4U, with the goal of complementing deterministic models with simulation approaches capable of evaluating system sensitivity and emerging market patterns. Based on the modular architecture defined in previous workshops, the ingestion, preprocessing, and analysis modules were integrated to prepare a numerical dataset suitable for both machine learning techniques and event-driven simulations.
+
+The work combined a sensitivity and chaos approach using Random Forest with Gaussian noise injection to identify critical variables affecting model stability, and a spatial dynamics approach using cellular automata to represent market evolution and the formation of sales clusters. Both methods were implemented in Python following principles of modularity, traceability, and consistency with the project baseline.
+
+This README refers to the full report [Workshop 4](https://github.com/Salda1308/SystemsAnalysisDesign-WorkshopsGroup/blob/main/Workshop_4/Workshop_4.pdf)
+ and the  [Simulation_Workshop_4](https://github.com/Salda1308/SystemsAnalysisDesign-WorkshopsGroup/tree/main/Workshop_4/Simulation_Workshop_4) folder, where the source code and scripts used in the simulations are located.
