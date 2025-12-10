@@ -36,35 +36,52 @@ X <- data[, !names(data) %in% c("sales", "Id", "id"), with = FALSE]
 y <- log1p(data$sales) # Log transform for better predictions
 X_test <- test_data[, !names(test_data) %in% c("Id", "id"), with = FALSE]
 
-# Encode categorical variables
-cat("Encoding categorical variables...\n")
-X_test$Tone_of_Ad <- as.numeric(factor(X_test$Tone_of_Ad, levels = c("funny", "serious", "emotional"))) - 1
-X_test$Weather <- as.numeric(factor(X_test$Weather, levels = c("sunny", "cloudy", "rainy"))) - 1
-X_test$Gender <- as.numeric(factor(X_test$Gender, levels = c("Female", "Male"))) - 1
-X_test$Coffee_Consumption <- as.numeric(factor(X_test$Coffee_Consumption, levels = c("low", "medium", "high"))) - 1
-
-# Feature Engineering
-cat("Engineering features...\n")
-add_features <- function(df) {
-    df$Web_Facebook_ratio <- df$Web_GRP / (df$Facebook_GRP + 1)
-    df$TV_Web_ratio <- df$TV_GRP / (df$Web_GRP + 1)
-    df$Total_ad_spend <- df$Web_GRP + df$TV_GRP + df$Facebook_GRP
-    df$Competitor_density <- df$No_of_Competitors / (df$No_of_Big_Cities + 1)
-    df$Internet_adoption <- df$Percent_Internet_Access * df$Percent_Uni_Degrees / 100
-    return(df)
+# Convert categorical variables in test data if they exist (training data already processed)
+cat("Processing test data...\n")
+if ("Tone_of_Ad" %in% names(X_test)) {
+    X_test$Tone_of_Ad <- as.numeric(factor(X_test$Tone_of_Ad, levels = c("funny", "serious", "emotional"))) - 1
 }
-X <- add_features(X)
-X_test <- add_features(X_test)
+if ("Weather" %in% names(X_test)) {
+    X_test$Weather <- as.numeric(factor(X_test$Weather, levels = c("sunny", "cloudy", "rainy"))) - 1
+}
+if ("Gender" %in% names(X_test)) {
+    X_test$Gender <- as.numeric(factor(X_test$Gender, levels = c("Female", "Male"))) - 1
+}
+if ("Coffee_Consumption" %in% names(X_test)) {
+    X_test$Coffee_Consumption <- as.numeric(factor(X_test$Coffee_Consumption, levels = c("low", "medium", "high"))) - 1
+}
 
-# Handle Missing Values
-cat("Handling missing values...\n")
+# Clean data: remove NA, NaN, Inf values
+cat("Cleaning data...\n")
 for (col in names(X)) {
     if (is.numeric(X[[col]])) {
-        med <- median(X[[col]], na.rm = TRUE)
-        X[[col]][is.na(X[[col]])] <- med
-        if (col %in% names(X_test)) X_test[[col]][is.na(X_test[[col]])] <- med
+        # Replace infinite values with NA first
+        X[[col]][is.infinite(X[[col]])] <- NA
+        # Replace NA with median, or 0 if all values are NA
+        if (any(is.na(X[[col]]))) {
+            med <- median(X[[col]], na.rm = TRUE)
+            if (is.na(med)) med <- 0
+            X[[col]][is.na(X[[col]])] <- med
+        }
     }
 }
+
+for (col in names(X_test)) {
+    if (is.numeric(X_test[[col]])) {
+        X_test[[col]][is.infinite(X_test[[col]])] <- NA
+        if (any(is.na(X_test[[col]]))) {
+            med <- median(X_test[[col]], na.rm = TRUE)
+            if (is.na(med)) med <- 0
+            X_test[[col]][is.na(X_test[[col]])] <- med
+        }
+    }
+}
+
+# Final safety check
+X <- as.data.frame(X)
+X_test <- as.data.frame(X_test)
+X[is.na(X)] <- 0
+X_test[is.na(X_test)] <- 0
 
 # Split Data
 set.seed(42)
@@ -78,7 +95,7 @@ cat("\nTrain:", nrow(X_train), "| Val:", nrow(X_val), "| Test:", nrow(X_test), "
 
 # Train Models
 cat("Training models...\n\n")
-train_ctrl <- trainControl(method = "cv", number = 5)
+train_ctrl <- trainControl(method = "cv", number = 3, verboseIter = FALSE, allowParallel = FALSE)
 results <- list()
 
 # Helper function to calculate MAE on original scale
@@ -86,42 +103,68 @@ calc_mae <- function(pred_log, actual_log) {
     mean(abs(expm1(pred_log) - expm1(actual_log)))
 }
 
-# 1. XGBoost (Best single model)
-cat("1. XGBoost... ")
-xgb_grid <- expand.grid(
-    nrounds = 1000, max_depth = 5, eta = 0.01, gamma = 0,
-    colsample_bytree = 0.8, min_child_weight = 1, subsample = 0.8
-)
-model_xgb <- train(
-    x = X_train, y = y_train, method = "xgbTree",
-    trControl = train_ctrl, tuneGrid = xgb_grid, verbose = FALSE
-)
-pred_xgb <- predict(model_xgb, X_val)
-results$XGBoost <- calc_mae(pred_xgb, y_val)
-cat("MAE:", round(results$XGBoost, 2), "\n")
-
-# 2. Random Forest
-cat("2. Random Forest... ")
-model_rf <- train(
-    x = X_train, y = y_train, method = "rf",
-    trControl = train_ctrl, ntree = 1000, tuneLength = 3
-)
-pred_rf <- predict(model_rf, X_val)
-results$RandomForest <- calc_mae(pred_rf, y_val)
-cat("MAE:", round(results$RandomForest, 2), "\n")
-
-# 3. Linear Regression (Baseline)
-cat("3. Linear Regression... ")
+# 1. Linear Regression (Baseline - fastest)
+cat("1. Linear Regression... ")
 model_lm <- train(x = X_train, y = y_train, method = "lm", trControl = train_ctrl)
 pred_lm <- predict(model_lm, X_val)
 results$Linear <- calc_mae(pred_lm, y_val)
 cat("MAE:", round(results$Linear, 2), "\n")
 
-# 4. Stacking Ensemble (Combines all models for best MAE)
+# 2. Random Forest (simpler configuration)
+cat("2. Random Forest... ")
+model_rf <- train(
+    x = X_train, y = y_train, method = "rf",
+    trControl = train_ctrl, ntree = 200, tuneLength = 1
+)
+pred_rf <- predict(model_rf, X_val)
+results$RandomForest <- calc_mae(pred_rf, y_val)
+cat("MAE:", round(results$RandomForest, 2), "\n")
+
+# 3. XGBoost (using xgboost directly, more stable)
+cat("3. XGBoost... ")
+dtrain <- xgb.DMatrix(data = as.matrix(X_train), label = y_train)
+dval <- xgb.DMatrix(data = as.matrix(X_val), label = y_val)
+
+xgb_params <- list(
+    objective = "reg:squarederror",
+    max_depth = 3,
+    eta = 0.1,
+    subsample = 0.8,
+    colsample_bytree = 0.8
+)
+
+model_xgb <- xgb.train(
+    params = xgb_params,
+    data = dtrain,
+    nrounds = 100,
+    verbose = 0
+)
+
+pred_xgb <- predict(model_xgb, dval)
+results$XGBoost <- calc_mae(pred_xgb, y_val)
+cat("MAE:", round(results$XGBoost, 2), "\n")
+
+# 4. Stacking Ensemble (Meta-learner combining all base models)
 cat("4. Stacking Ensemble... ")
-meta_features <- data.frame(XGBoost = pred_xgb, RandomForest = pred_rf, Linear = pred_lm)
-meta_model <- lm(y_val ~ ., data = meta_features)
-pred_stack <- predict(meta_model, meta_features)
+
+# Create meta-features from base model predictions on validation set
+meta_features <- data.frame(
+    Linear = pred_lm,
+    RandomForest = pred_rf,
+    XGBoost = pred_xgb,
+    target = y_val
+)
+
+# Train meta-model (simple linear regression on base predictions)
+meta_model <- lm(target ~ Linear + RandomForest + XGBoost, data = meta_features)
+
+# Generate stacking predictions
+meta_test_features <- data.frame(
+    Linear = pred_lm,
+    RandomForest = pred_rf,
+    XGBoost = pred_xgb
+)
+pred_stack <- predict(meta_model, meta_test_features)
 results$Stacking <- calc_mae(pred_stack, y_val)
 cat("MAE:", round(results$Stacking, 2), "\n")
 
@@ -141,14 +184,21 @@ cat("\nGenerating test predictions...\n")
 best_name <- names(sorted)[1]
 
 if (best_name == "Stacking") {
-    # For stacking, combine all model predictions
-    pred_xgb_test <- predict(model_xgb, X_test)
-    pred_rf_test <- predict(model_rf, X_test)
+    # For stacking, combine all model predictions on test set
+    dtest <- xgb.DMatrix(data = as.matrix(X_test))
     pred_lm_test <- predict(model_lm, X_test)
-    meta_test <- data.frame(XGBoost = pred_xgb_test, RandomForest = pred_rf_test, Linear = pred_lm_test)
+    pred_rf_test <- predict(model_rf, X_test)
+    pred_xgb_test <- predict(model_xgb, dtest)
+
+    meta_test <- data.frame(
+        Linear = pred_lm_test,
+        RandomForest = pred_rf_test,
+        XGBoost = pred_xgb_test
+    )
     pred_test_log <- predict(meta_model, meta_test)
 } else if (best_name == "XGBoost") {
-    pred_test_log <- predict(model_xgb, X_test)
+    dtest <- xgb.DMatrix(data = as.matrix(X_test))
+    pred_test_log <- predict(model_xgb, dtest)
 } else if (best_name == "RandomForest") {
     pred_test_log <- predict(model_rf, X_test)
 } else {
@@ -173,22 +223,43 @@ write_json(list(
     all_results = lapply(names(sorted), function(n) list(model = n, mae = results[[n]]))
 ), file.path(out_dir, "model_comparison_results_R.json"), pretty = TRUE, auto_unbox = TRUE)
 
-# Save best model
+# Save best model with feature names
 model_path <- file.path(models_dir, "best_model_R.rds")
+feature_names <- names(X_train)
+
 if (best_name == "Stacking") {
-    saveRDS(
-        list(
-            meta_model = meta_model,
-            base_models = list(xgb = model_xgb, rf = model_rf, lm = model_lm)
+    # Save stacking ensemble with all base models and meta-model
+    model_with_features <- list(
+        model = list(
+            base_models = list(lm = model_lm, rf = model_rf, xgb = model_xgb),
+            meta_model = meta_model
         ),
-        model_path
+        feature_names = feature_names,
+        model_type = "stacking"
     )
+    saveRDS(model_with_features, model_path)
 } else if (best_name == "XGBoost") {
-    saveRDS(model_xgb, model_path)
+    # Save model with feature names
+    model_with_features <- list(
+        model = model_xgb,
+        feature_names = feature_names,
+        model_type = "xgboost"
+    )
+    saveRDS(model_with_features, model_path)
 } else if (best_name == "RandomForest") {
-    saveRDS(model_rf, model_path)
+    model_with_features <- list(
+        model = model_rf,
+        feature_names = feature_names,
+        model_type = "rf"
+    )
+    saveRDS(model_with_features, model_path)
 } else {
-    saveRDS(model_lm, model_path)
+    model_with_features <- list(
+        model = model_lm,
+        feature_names = feature_names,
+        model_type = "lm"
+    )
+    saveRDS(model_with_features, model_path)
 }
 
 cat("\n[OK] Training complete! Results saved to", out_dir, "\n")

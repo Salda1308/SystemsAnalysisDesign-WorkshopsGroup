@@ -1,22 +1,22 @@
 {
   "best_model": "Stacking",
-  "best_mae": 4017.4729,
+  "best_mae": 4608.6745,
   "all_results": [
     {
       "model": "Stacking",
-      "mae": 4017.4729
+      "mae": 4608.6745
     },
     {
       "model": "XGBoost",
-      "mae": 5107.478
-    },
-    {
-      "model": "RandomForest",
-      "mae": 8254.6074
+      "mae": 6185.2577
     },
     {
       "model": "Linear",
-      "mae": 11997.8575
+      "mae": 11994.9135
+    },
+    {
+      "model": "RandomForest",
+      "mae": 21283.0714
     }
   ]
 }
