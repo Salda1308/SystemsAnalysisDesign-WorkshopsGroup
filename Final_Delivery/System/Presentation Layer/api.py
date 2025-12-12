@@ -41,6 +41,8 @@ R_EXECUTABLE = r"C:\Program Files\R\R-4.5.2\bin\Rscript.exe" if platform.system(
 
 # Mount static files
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "OUT")), name="static")
+# Serve presentation assets (images, CSS, JS)
+app.mount("/assets", StaticFiles(directory=str(PRESENTATION_DIR)), name="assets")
 
 @app.on_event("startup")
 async def startup_event():
@@ -50,7 +52,7 @@ async def startup_event():
     print("="*70)
     print("✓ API started - Using R for predictions")
     print(f"✓ R model path: {R_MODEL_PATH}")
-
+    
     if R_MODEL_PATH.exists():
         print("✓ R model found and ready")
     else:
@@ -82,60 +84,60 @@ async def health_check():
 async def predict(file: UploadFile = File(...)):
     """
     Generate predictions using R model
-
+    
     Args:
         file: CSV file with test data
-
+        
     Returns:
         JSON with predictions
     """
     if not file.filename.endswith('.csv'):
         raise HTTPException(status_code=400, detail="File must be a CSV file")
-
+    
     try:
         # Read uploaded CSV
         contents = await file.read()
-
+        
         # Create temporary file
         with tempfile.NamedTemporaryFile(mode='wb', delete=False, suffix='.csv') as temp_file:
             temp_file.write(contents)
             temp_path = temp_file.name
-
+        
         # Call R script for predictions
         r_script = PRESENTATION_DIR / "predict.R"
         r_executable = R_EXECUTABLE
-
+        
         result = subprocess.run(
             [r_executable, str(r_script), temp_path],
             capture_output=True,
             text=True,
             cwd=str(BASE_DIR)
         )
-
+        
         # Log R script output for debugging
         print(f"R script return code: {result.returncode}")
         print(f"R script stdout: {result.stdout[:500]}")
         print(f"R script stderr: {result.stderr[:500]}")
-
+        
         if result.returncode != 0:
             raise Exception(f"R script failed with code {result.returncode}. STDERR: {result.stderr}")
-
+        
         # Parse JSON output from R
         try:
             predictions_data = json.loads(result.stdout)
         except json.JSONDecodeError as je:
             raise Exception(f"Failed to parse R output as JSON. Output was: {result.stdout[:200]}")
-
+        
         # Clean up
         Path(temp_path).unlink()
-
+        
         return {
             "status": "success",
             "predictions": predictions_data,
             "count": len(predictions_data),
-            "model": "R Stacking Ensemble (Linear + Random Forest + XGBoost)"
+            "model": "R Stacking Ensemble"
         }
-
+        
     except Exception as e:
         print(f"Prediction error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
@@ -145,56 +147,56 @@ async def predict(file: UploadFile = File(...)):
 async def predict_csv(file: UploadFile = File(...)):
     """
     Generate predictions using R and return as CSV
-
+    
     Args:
         file: CSV file with test data
-
+        
     Returns:
         CSV file with predictions
     """
     if not file.filename.endswith('.csv'):
         raise HTTPException(status_code=400, detail="File must be a CSV file")
-
+    
     try:
         # Read uploaded CSV
         contents = await file.read()
-
+        
         # Create temporary file
         with tempfile.NamedTemporaryFile(mode='wb', delete=False, suffix='.csv') as temp_file:
             temp_file.write(contents)
             temp_path = temp_file.name
-
+        
         # Call R script for predictions
         r_script = PRESENTATION_DIR / "predict.R"
         r_executable = R_EXECUTABLE
-
+        
         result = subprocess.run(
             [r_executable, str(r_script), temp_path],
             capture_output=True,
             text=True,
             cwd=str(BASE_DIR)
         )
-
+        
         if result.returncode != 0:
             raise Exception(f"R script failed with code {result.returncode}. STDERR: {result.stderr}")
-
+        
         # Parse JSON output from R
         predictions_data = json.loads(result.stdout)
-
+        
         # Convert to DataFrame and save
         submission = pd.DataFrame(predictions_data)
         submission.to_csv(PREDICTIONS_OUTPUT_PATH, index=False)
-
+        
         # Clean up
         Path(temp_path).unlink()
-
+        
         # Return CSV file
         return FileResponse(
             path=PREDICTIONS_OUTPUT_PATH,
             media_type='text/csv',
             filename='predictions.csv'
         )
-
+        
     except Exception as e:
         print(f"CSV Prediction error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")

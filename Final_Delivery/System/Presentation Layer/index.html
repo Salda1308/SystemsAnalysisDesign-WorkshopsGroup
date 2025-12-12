@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chocolate Sales Prediction</title>
+    <title>Chocolates-4U </title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Playfair+Display:wght@400;700;800&family=Great+Vibes&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -12,314 +14,1124 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --chocolate-dark: #3b2314;
+            --chocolate-darker: #2a1a11;
+            --chocolate-medium: #6b4423;
+            --chocolate-light: #8b5a3c;
+            --milk-chocolate: #a0714f;
+            --cream: #ffffff;
+            --beige: #ffffff;
+            --white: #ffffff;
+            --gold: #d4af37;
+            --accent: #c8996f;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--chocolate-darker) 0%, #4a3225 50%, #5a4035 100%);
             min-height: 100vh;
-            padding: 20px;
+            color: #ffffff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(160, 113, 79, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(107, 68, 35, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 1;
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
         }
 
+        /* Header Navigation */
         header {
-            background: rgba(255, 255, 255, 0.95);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, rgba(58, 35, 20, 0.98) 0%, rgba(42, 26, 17, 0.95) 100%);
             backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 20px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            border-bottom: 2px solid var(--gold);
         }
 
-        h1 {
-            color: #667eea;
-            font-size: 2.5em;
-            margin-bottom: 10px;
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .subtitle {
-            color: #666;
+        .header-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .header-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--gold);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            letter-spacing: 0.5px;
+        }
+
+        .header-subtitle {
+            font-size: 0.8em;
+            color: #ffffff;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            padding: 10px 15px;
+            border-radius: 8px;
+            position: relative;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 15px;
+            right: 15px;
+            height: 2px;
+            background: var(--gold);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        nav a:hover::after {
+            transform: scaleX(1);
+        }
+
+        nav i {
             font-size: 1.1em;
         }
 
-        .tabs {
+        /* Hero Section */
+        .hero {
+            margin-top: 120px;
+            min-height: 90vh;
+                background: linear-gradient(135deg, rgba(30, 15, 5, 0.75) 0%, rgba(20, 10, 3, 0.85) 100%), 
+                    url('/assets/Fondo.jpg') center/cover;
+            background-attachment: fixed;
+            position: relative;
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            text-align: left;
+            overflow: hidden;
+            border-radius: 25px;
+            margin-bottom: 60px;
+            padding: 60px;
+            gap: 40px;
         }
 
-        .tab {
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: 600;
-            transition: all 0.3s;
-            color: #667eea;
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
+            pointer-events: none;
         }
 
-        .tab:hover,
-        .tab.active {
-            background: #667eea;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 500px;
+            animation: slideUp 0.8s ease-out;
         }
 
-        .content {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+
+        .hero-image-wrapper {
+            position: relative;
+            z-index: 2;
+            flex-shrink: 0;
+        }
+
+        .hero-image-wrapper img {
+            width: 1200px;
+            height: auto;
             border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            display: none;
+            margin-right: -500px;
+            object-fit: cover;
+            animation: float 10s ease-in-out infinite;
+        }
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5em;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.7);
+            letter-spacing: -1px;
+            line-height: 1.1;
         }
 
-        .content.active {
-            display: block;
-            animation: fadeIn 0.5s;
+        .hero .hero-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6em;
+            color: #ffffff;
+            margin-bottom: 30px;
+            font-weight: 300;
+            letter-spacing: 2px;
         }
 
-        @keyframes fadeIn {
+        .hero-image-container {
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+        }
+
+        .hero-image-placeholder {
+            width: 100%;
+            max-width: 500px;
+            height: 350px;
+            background: linear-gradient(135deg, rgba(160, 113, 79, 0.3) 0%, rgba(107, 68, 35, 0.2) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8em;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(40px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        .grid {
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        /* Feature Cards Section */
+        .features-section {
+            margin-bottom: 80px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.2em;
+            color: #ffffff;
+            text-align: center;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #ffffff;
+            font-size: 1.1em;
+            margin-bottom: 60px;
+            font-weight: 300;
+        }
+
+        .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, rgba(107, 68, 35, 0.6) 0%, rgba(90, 55, 30, 0.5) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            padding: 40px 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0;
+            transition: all 0.6s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 20px 50px rgba(212, 175, 55, 0.2);
+            border-color: rgba(212, 175, 55, 0.6);
+            background: linear-gradient(135deg, rgba(107, 68, 35, 0.8) 0%, rgba(90, 55, 30, 0.7) 100%);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+            top: -20%;
+            right: -20%;
+        }
+
+        .feature-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8em;
+            color: #ffffff;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .feature-card .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8em;
+            color: #ffffff;
+            font-weight: 700;
+            margin: 20px 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .feature-card p {
+            color: #ffffff;
+            font-size: 1em;
+            line-height: 1.6;
+            position: relative;
+            z-index: 2;
+            font-weight: 300;
+        }
+
+        /* API Status */
+        .api-status {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(160, 113, 79, 0.1) 100%);
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 30px;
+            display: flex;
+            align-items: center;
             gap: 20px;
-            margin-top: 20px;
+            margin-top: 40px;
+            position: relative;
+            z-index: 10;
         }
 
-        .card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
+        .status-indicator {
+            width: 20px;
+            height: 20px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 15px #4CAF50;
         }
 
-        .card:hover {
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 15px #4CAF50;
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 25px #4CAF50;
+                transform: scale(1.1);
+            }
+        }
+
+        .status-text h4 {
+            color: #ffffff;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        .status-text p {
+            color: #ffffff;
+            font-size: 0.95em;
+        }
+
+        /* Tabs Section */
+        .tabs-container {
+            margin-top: 60px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .tabs-nav {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.2);
+            padding-bottom: 20px;
+        }
+
+        .tab-btn {
+            background: linear-gradient(135deg, rgba(107, 68, 35, 0.5) 0%, rgba(90, 55, 30, 0.4) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #ffffff;
+            padding: 15px 30px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--gold);
+            color: #ffffff;
+            background: linear-gradient(135deg, rgba(107, 68, 35, 0.8) 0%, rgba(90, 55, 30, 0.7) 100%);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--gold) 0%, #c9a130 100%);
+            color: #ffffff;
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+            border-color: var(--gold);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+            position: relative;
+            z-index: 10;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(180deg, rgba(42, 26, 17, 0.95) 0%, rgba(26, 15, 8, 0.98) 100%);
+            border-top: 2px solid var(--gold);
+            padding: 60px 20px 30px;
+            margin-top: 80px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h4 {
+            color: #ffffff;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .footer-section p {
+            color: #ffffff;
+            font-size: 0.95em;
+            line-height: 1.8;
+            font-weight: 300;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(212, 175, 55, 0.2);
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .social-icon:hover {
+            background: var(--gold);
+            color: var(--chocolate-darker);
             transform: translateY(-5px);
         }
 
-        .card h3 {
-            color: #667eea;
+        .footer-bottom {
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            padding-top: 30px;
+            text-align: center;
+            color: #ffffff;
+        }
+
+        .footer-bottom p {
+            margin: 0;
+            font-size: 0.95em;
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: linear-gradient(135deg, rgba(107, 68, 35, 0.6) 0%, rgba(90, 55, 30, 0.5) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .content-card:hover {
+            box-shadow: 0 12px 40px rgba(212, 175, 55, 0.15);
+            border-color: rgba(212, 175, 55, 0.5);
+        }
+
+        .content-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6em;
+            color: #ffffff;
             margin-bottom: 15px;
         }
 
-        .stat {
-            font-size: 2em;
-            font-weight: bold;
-            color: #764ba2;
+        .content-card p {
+            color: #ffffff;
+            font-size: 1em;
+            line-height: 1.7;
+            font-weight: 300;
         }
 
+        /* File Upload Area */
         .upload-area {
-            border: 3px dashed #667eea;
-            border-radius: 15px;
-            padding: 40px;
+            border: 3px dashed var(--gold);
+            border-radius: 20px;
+            padding: 50px 30px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s;
-            background: #f8f9ff;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, rgba(160, 113, 79, 0.2) 0%, rgba(107, 68, 35, 0.1) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
+            transition: left 0.5s ease;
         }
 
         .upload-area:hover {
-            background: #eef1ff;
-            border-color: #764ba2;
+            background: linear-gradient(135deg, rgba(160, 113, 79, 0.4) 0%, rgba(107, 68, 35, 0.2) 100%);
+            border-color: #d4af37;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+        }
+
+        .upload-area:hover::before {
+            left: 100%;
+        }
+
+        .upload-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 1.2em;
+            color: #ffffff;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            font-size: 0.95em;
+            color: #ffffff;
+            font-weight: 300;
         }
 
         input[type="file"] {
             display: none;
         }
 
+        /* Button Styles */
         .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: linear-gradient(135deg, var(--gold) 0%, #c9a130 100%);
+            color: var(--chocolate-darker);
             border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
+            padding: 15px 35px;
+            border-radius: 12px;
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
         }
 
         .btn:disabled {
-            opacity: 0.5;
+            opacity: 0.6;
             cursor: not-allowed;
+            transform: none;
         }
 
-        .visualization {
-            width: 100%;
-            border-radius: 10px;
-            margin-top: 15px;
+        .btn-secondary {
+            background: linear-gradient(135deg, rgba(160, 113, 79, 0.8) 0%, rgba(107, 68, 35, 0.7) 100%);
+            color: var(--cream);
+            border: 1px solid var(--gold);
         }
 
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, rgba(160, 113, 79, 1) 0%, rgba(107, 68, 35, 0.9) 100%);
+        }
+
+        /* Table Styles */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
+            margin-top: 25px;
+            background: linear-gradient(135deg, rgba(107, 68, 35, 0.6) 0%, rgba(90, 55, 30, 0.5) 100%);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(212, 175, 55, 0.3);
         }
 
-        th,
-        td {
-            padding: 12px;
+        th, td {
+            padding: 18px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
         }
 
         th {
-            background: #667eea;
-            color: white;
+            background: linear-gradient(135deg, var(--chocolate-medium) 0%, var(--chocolate-dark) 100%);
+            color: #ffffff;
+            font-weight: 600;
+            font-family: 'Playfair Display', serif;
+        }
+
+        td {
+            color: #ffffff;
+            font-weight: 300;
         }
 
         tr:hover {
-            background: #f8f9ff;
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        /* Image Container */
+        .visualization {
+            width: 100%;
+            border-radius: 20px;
+            margin-top: 20px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .visualization:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 50px rgba(212, 175, 55, 0.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2.2em;
+            }
+
+            .hero {
+                flex-direction: column;
+                padding: 40px 20px;
+                text-align: center;
+                justify-content: center;
+            }
+
+            .hero-image-wrapper img {
+                width: 300px;
+            }
+
+            .hero-content {
+                max-width: 100%;
+                text-align: center;
+            }
+
+            .hero h1 {
+                font-size: 2.5em;
+            }
+
+            .hero .hero-subtitle {
+                font-size: 1.2em;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .feature-card {
+                padding: 30px 20px;
+            }
+
+            nav {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-end;
+                font-size: 0.85em;
+            }
+
+            .tabs-nav {
+                gap: 10px;
+            }
+
+            .tab-btn {
+                padding: 12px 20px;
+                font-size: 0.9em;
+            }
+
+            .content-card {
+                padding: 25px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .upload-area {
+                padding: 30px 20px;
+            }
+
+            .upload-icon {
+                font-size: 2.5em;
+            }
         }
     </style>
 </head>
 
 <body>
+    <!-- Fixed Header Navigation -->
+    <header>
+        <div class="container">
+            <div class="header-brand">
+                <div class="header-title">Chocolates-4U</div>
+                
+            </div>
+            <nav>
+                <a href="#home"><i class="fas fa-home"></i> Home</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Welcome to the Chocolate Sales Predictor</h1>
+            <p class="hero-subtitle">A data-driven approach to forecasting chocolate market trends</p>
+        </div>
+
+        <div class="hero-image-wrapper">
+            <img src="/assets/chocolate.png" alt="Premium Chocolate Selection">
+        </div>
+    </section>
+    <!-- Feature Cards Section -->
     <div class="container">
-        <header>
-            <h1>🍫 Chocolate Sales Prediction</h1>
-            <p class="subtitle">3-Layer Architecture | R-Powered XGBoost</p>
-        </header>
+        <section class="features-section" id="features">
+            <h2 class="section-title">System Overview</h2>
+            <p class="section-subtitle">Advanced machine learning architecture optimized for chocolate market prediction</p>
 
-        <div class="tabs">
-            <button class="tab active" onclick="showTab('overview')">📊 Overview</button>
-            <button class="tab" onclick="showTab('visualizations')">📈 Visualizations</button>
-            <button class="tab" onclick="showTab('predict')">🔮 Predictions</button>
-        </div>
+            <div class="features-grid">
+                <!-- Card 1: 3-Layer Architecture -->
+                <div class="feature-card">
+                    <h3>3-Layer Architecture</h3>
+                    <div class="stat-number">3</div>
+                    <p>Python → R → API infrastructure for predictive modeling</p>
+                </div>
 
-        <div id="overview" class="content active">
-            <h2>Project Overview</h2>
-            <div class="grid">
-                <div class="card">
-                    <h3>Model</h3>
-                    <div class="stat">XGBoost</div>
-                    <p>Trained in R</p>
+                <!-- Card 2: Best Model -->
+                <div class="feature-card">
+                    <h3>Best Model: Stacking Ensemble</h3>
+                    <div class="stat-number" id="best-model">-</div>
+                    <p>Validated as the top-performing model across experiments</p>
                 </div>
-                <div class="card">
-                    <h3>Training Data</h3>
-                    <div class="stat">750</div>
-                    <p>Samples</p>
-                </div>
-                <div class="card">
-                    <h3>Features</h3>
-                    <div class="stat">24</div>
-                    <p>Variables</p>
-                </div>
-                <div class="card">
-                    <h3>API Status</h3>
-                    <button class="btn" onclick="checkHealth()">Check</button>
-                    <div id="health-status" style="margin-top: 10px;"></div>
+
+                <!-- Card 3: Training Samples -->
+                <div class="feature-card">
+                    <h3>751 Trained Samples</h3>
+                    <div class="stat-number" id="training-samples">751</div>
+                    <p>Cleaned, processed, and optimized for machine learning</p>
                 </div>
             </div>
-        </div>
 
-        <div id="visualizations" class="content">
-            <h2>Data Analysis</h2>
-            <div class="grid">
-                <div class="card">
-                    <h3>Correlation Heatmap</h3>
-                    <img src="/static/CorrelationHeatmap.png" alt="Heatmap" class="visualization">
-                </div>
-                <div class="card">
-                    <h3>Feature Importance</h3>
-                    <img src="/static/FeatureImportance.png" alt="Importance" class="visualization">
-                </div>
-                <div class="card">
-                    <h3>Scatter Correlations</h3>
-                    <img src="/static/ScatterCorrelations.png" alt="Scatter" class="visualization">
-                </div>
-                <div class="card">
-                    <h3>Boxplots</h3>
-                    <img src="/static/Boxplots.png" alt="Boxplots" class="visualization">
+            <!-- API Status Box -->
+            <div class="api-status">
+                <div class="status-indicator" id="status-bubble"></div>
+                <div class="status-text">
+                    <h4>API Status</h4>
+                    <p id="api-status-text">Checking system status...</p>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div id="predict" class="content">
-            <h2>Generate Predictions</h2>
-            <div class="card">
-                <h3>Upload Test Data</h3>
-                <div class="upload-area" onclick="document.getElementById('file-input').click()">
-                    <p style="font-size: 3em;">📁</p>
-                    <p style="font-size: 1.2em; color: #667eea;">Click to upload CSV</p>
-                    <input type="file" id="file-input" accept=".csv" onchange="handleFile(event)">
-                </div>
-                <div id="file-info" style="margin-top: 15px; display: none;">
-                    <p><strong>File:</strong> <span id="file-name"></span></p>
-                </div>
-                <button class="btn" id="predict-btn" onclick="makePrediction()" disabled>Generate Predictions</button>
+        <!-- Tabs Section -->
+        <section class="tabs-container">
+            <div class="tabs-nav">
+                <button class="tab-btn active" onclick="switchTab(event, 'tab-analysis')">
+                    <i class="fas fa-chart-bar"></i> Analysis
+                </button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-models')">
+                    <i class="fas fa-brain"></i> Models
+                </button>
+                <button class="tab-btn" onclick="switchTab(event, 'tab-predictions')">
+                    <i class="fas fa-crystal-ball"></i> Predictions
+                </button>
+            </div>
 
-                <div id="results" style="margin-top: 20px; display: none;">
-                    <h3>Results</h3>
-                    <p><strong>Total:</strong> <span id="count"></span></p>
-                    <div id="table"></div>
-                    <button class="btn" onclick="downloadCSV()">Download CSV</button>
+            <!-- Analysis Tab -->
+            <div id="tab-analysis" class="tab-content active">
+                <div class="content-card">
+                    <h3>Data Analysis Visualizations</h3>
+                    <p>Visualizations generated from the processed and analyzed chocolate sales data</p>
+                    <div id="visualizations-grid" class="features-grid">
+                        <!-- Visualizations will be loaded dynamically -->
+                    </div>
                 </div>
             </div>
-        </div>
+
+            <!-- Models Tab -->
+            <div id="tab-models" class="tab-content">
+                <div class="content-card">
+                    <h3>Model Comparison & Results</h3>
+                    <p>Performance metrics from the training and validation of different machine learning models</p>
+                    <div id="model-results">
+                        <!-- Model results will be loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Predictions Tab -->
+            <div id="tab-predictions" class="tab-content">
+                <div class="content-card">
+                    <h3>Generate Predictions</h3>
+                    <p>Upload your CSV file with test data to generate sales predictions using our trained model</p>
+
+                    <div class="upload-area" onclick="document.getElementById('file-input').click()">
+                        <div class="upload-icon">📄</div>
+                        <div class="upload-text">Select CSV File</div>
+                        <div class="upload-subtext">Only .csv files are accepted</div>
+                        <input type="file" id="file-input" accept=".csv" onchange="handleFile(event)">
+                    </div>
+
+                    <div id="file-info" style="display: none; margin-top: 25px;">
+                        <div class="content-card">
+                            <p><strong>📄 File selected:</strong> <span id="file-name" style="color: var(--gold);"></span></p>
+                            <p id="file-size" style="color: var(--beige); font-size: 0.9em;"></p>
+                        </div>
+                    </div>
+
+                    <button class="btn" id="predict-btn" onclick="makePrediction()" disabled>
+                        <i class="fas fa-rocket"></i> Generate Predictions
+                    </button>
+
+                    <div id="results" style="display: none; margin-top: 40px;">
+                        <h3 style="color: var(--gold); margin-bottom: 20px;">📊 Prediction Results</h3>
+                        <div style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(160, 113, 79, 0.1) 100%); border: 2px solid var(--gold); border-radius: 15px; padding: 25px; margin-bottom: 25px;">
+                            <p style="color: var(--cream); margin-bottom: 10px;"><strong>Total Predictions:</strong> <span id="count" style="font-size: 1.3em; color: var(--gold);"></span></p>
+                            <p style="color: var(--beige);"><strong>Model Used:</strong> XGBoost Ensemble (R)</p>
+                        </div>
+                        <div id="table"></div>
+                        <button class="btn btn-secondary" onclick="downloadCSV()" style="margin-top: 25px;">
+                            <i class="fas fa-download"></i> Download Full CSV
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>About This System</h4>
+                    <p>A sophisticated machine learning system designed to predict chocolate market sales with high accuracy using advanced ensemble methods and data-driven insights.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Architecture</h4>
+                    <p>Built with Python for data processing, R for statistical modeling, and a modern API layer for seamless integration and predictions.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>Chocolate Sales Prediction Project – Advanced Machine Learning Demo</p>
+                <p style="margin-top: 10px; font-size: 0.85em;">© 2025 Premium Chocolate Analytics | Crafted with love for chocolate lovers</p>
+            </div>
+        </div>
+    </footer>
 
     <script>
         const API_URL = 'http://localhost:8000';
         let selectedFile = null;
+        let predictions = [];
 
-        function showTab(tab) {
-            document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(tab).classList.add('active');
+        // Tab switching function
+        function switchTab(event, tabId) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
             event.target.classList.add('active');
+
+            // Load dynamic content based on tab
+            if (tabId === 'tab-analysis') {
+                loadVisualizations();
+            } else if (tabId === 'tab-models') {
+                loadModelResults();
+            }
         }
 
+        // Check API Health
         async function checkHealth() {
             try {
                 const res = await fetch(`${API_URL}/health`);
                 const data = await res.json();
-                document.getElementById('health-status').innerHTML =
-                    data.status === 'healthy' ?
-                        '<div style="color: green;">✓ Healthy</div>' :
-                        '<div style="color: red;">✗ Unhealthy</div>';
+                
+                const statusBubble = document.getElementById('status-bubble');
+                const statusText = document.getElementById('api-status-text');
+                
+                if (data.status === 'healthy') {
+                    statusBubble.style.background = '#4CAF50';
+                    statusText.textContent = 'Operating System Verified';
+                } else {
+                    statusBubble.style.background = '#f44336';
+                    statusText.textContent = 'System not available';
+                }
             } catch (e) {
-                document.getElementById('health-status').innerHTML =
-                    '<div style="color: red;">✗ Cannot connect</div>';
+                const statusBubble = document.getElementById('status-bubble');
+                const statusText = document.getElementById('api-status-text');
+                statusBubble.style.background = '#f44336';
+                statusText.textContent = 'Cannot connect to server';
             }
         }
 
+        // Load Visualizations
+        async function loadVisualizations() {
+            const grid = document.getElementById('visualizations-grid');
+
+            const visualizations = [
+                { name: 'CorrelationHeatmap.png', title: 'Correlation Heatmap' },
+                { name: 'FeatureImportance.png', title: 'Feature Importance' },
+                { name: 'ScatterCorrelations.png', title: 'Scatter Correlations' },
+                { name: 'Boxplots.png', title: 'Distribution Analysis' }
+            ];
+
+            let html = '';
+            visualizations.forEach(viz => {
+                html += `
+                    <div class="feature-card" style="padding: 0; overflow: hidden;">
+                        <h3 style="padding: 20px 20px 0 20px; margin-bottom: 15px;">${viz.title}</h3>
+                        <img src="/static/${viz.name}" alt="${viz.title}" class="visualization"
+                             onerror="this.style.display='none'">
+                    </div>
+                `;
+            });
+
+            grid.innerHTML = html;
+        }
+
+        // Load Model Results
+        async function loadModelResults() {
+            const container = document.getElementById('model-results');
+
+            try {
+                const response = await fetch('/static/model_comparison_results_R.json');
+                if (response.ok) {
+                    const data = await response.json();
+
+                    document.getElementById('best-model').textContent = data.best_model;
+
+                    let html = '<table><tr><th>Model Name</th><th>MAE Score</th><th>Ranking</th></tr>';
+
+                    const sortedModels = data.all_results.sort((a, b) => a.mae - b.mae);
+
+                    sortedModels.forEach((model, index) => {
+                        const isBest = model.model === data.best_model;
+                        html += `
+                            <tr style="${isBest ? 'background: rgba(212, 175, 55, 0.1);' : ''}">
+                                <td>${model.model}${isBest ? ' ✓' : ''}</td>
+                                <td style="font-weight: 600; color: var(--gold);">${model.mae.toFixed(4)}</td>
+                                <td>#${index + 1}</td>
+                            </tr>
+                        `;
+                    });
+
+                    html += '</table>';
+                    html += `<div style="background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); border-radius: 12px; padding: 20px; margin-top: 25px; text-align: center;">
+                        <p style="color: var(--cream); margin-bottom: 5px;"><strong>Best Performing Model</strong></p>
+                        <p style="color: var(--gold); font-size: 1.3em; font-weight: 700;">${data.best_model}</p>
+                        <p style="color: var(--beige); font-size: 0.95em; margin-top: 5px;">MAE: ${data.best_mae.toFixed(4)}</p>
+                    </div>`;
+
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = `
+                        <div class="content-card">
+                            <h3 style="color: var(--gold); margin-bottom: 15px;">Results Not Available</h3>
+                            <p>Run the pipeline to generate model comparison results.</p>
+                        </div>
+                    `;
+                }
+            } catch (e) {
+                container.innerHTML = `
+                    <div class="content-card">
+                        <h3 style="color: var(--gold); margin-bottom: 15px;">Unable to Load Results</h3>
+                        <p>Could not load model results. Please check if the results file exists.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load Training Data Count
+        async function loadTrainingData() {
+            try {
+                const response = await fetch('/static/processed_data.csv');
+                if (response.ok) {
+                    const text = await response.text();
+                    const lines = text.split('\n');
+                    const sampleCount = lines.length - 1;
+                    document.getElementById('training-samples').textContent = sampleCount;
+                }
+            } catch (e) {
+                document.getElementById('training-samples').textContent = '751';
+            }
+        }
+
+        // Handle File Selection
         function handleFile(e) {
             selectedFile = e.target.files[0];
             if (selectedFile) {
                 document.getElementById('file-name').textContent = selectedFile.name;
+                document.getElementById('file-size').textContent = 
+                    `File size: ${(selectedFile.size / 1024).toFixed(1)} KB`;
                 document.getElementById('file-info').style.display = 'block';
                 document.getElementById('predict-btn').disabled = false;
             }
         }
 
+        // Make Prediction
         async function makePrediction() {
             if (!selectedFile) return;
+
+            const btn = document.getElementById('predict-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            btn.disabled = true;
 
             const formData = new FormData();
             formData.append('file', selectedFile);
@@ -331,28 +1143,48 @@
                 });
 
                 const data = await res.json();
-                document.getElementById('count').textContent = data.count;
+                predictions = data.predictions || [];
+                
+                document.getElementById('count').textContent = data.count.toLocaleString();
 
-                let html = '<table><tr><th>Id</th><th>Predicted Sales</th></tr>';
-                const predictions = data.predictions || [];
-                predictions.slice(0, 10).forEach(p => {
-                    html += `<tr><td>${p.Id}</td><td>${p.Expected.toFixed(2)}</td></tr>`;
+                let html = '<table><tr><th>ID</th><th>Predicted Sales</th></tr>';
+                const displayCount = Math.min(10, predictions.length);
+
+                predictions.slice(0, displayCount).forEach(p => {
+                    html += `<tr><td>${p.Id}</td><td style="font-weight: 600; color: var(--gold);">$${p.Expected.toFixed(2)}</td></tr>`;
                 });
                 html += '</table>';
 
-                if (data.count > 10) {
-                    html += `<p style="margin-top: 10px;">Showing first 10 of ${data.count}</p>`;
+                if (data.count > displayCount) {
+                    html += `<p style="margin-top: 20px; text-align: center; color: var(--beige); font-style: italic;">
+                        Showing ${displayCount} of ${data.count.toLocaleString()} predictions
+                    </p>`;
                 }
 
                 document.getElementById('table').innerHTML = html;
                 document.getElementById('results').style.display = 'block';
+
+                // Smooth scroll to results
+                setTimeout(() => {
+                    document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+
             } catch (e) {
-                alert('Error: ' + e.message);
+                alert('❌ Error generating predictions: ' + e.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
         }
 
+        // Download CSV
         async function downloadCSV() {
             if (!selectedFile) return;
+
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+            btn.disabled = true;
 
             const formData = new FormData();
             formData.append('file', selectedFile);
@@ -367,14 +1199,23 @@
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'predictions.csv';
+                a.download = `chocolate_predictions_${new Date().toISOString().split('T')[0]}.csv`;
                 a.click();
+                window.URL.revokeObjectURL(url);
             } catch (e) {
-                alert('Error: ' + e.message);
+                alert('❌ Error downloading file: ' + e.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
         }
 
-        window.onload = () => checkHealth();
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            checkHealth();
+            loadTrainingData();
+            loadModelResults();
+        });
     </script>
 </body>
 

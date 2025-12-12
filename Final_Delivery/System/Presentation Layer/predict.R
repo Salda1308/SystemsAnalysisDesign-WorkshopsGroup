@@ -19,20 +19,8 @@ if (length(args) == 0) {
 
 input_file <- args[1]
 
-# Load the trained model with feature names
-model_obj <- readRDS("OUT/models/best_model_R.rds")
-
-# Extract model and feature names
-if (is.list(model_obj) && "model" %in% names(model_obj)) {
-    model <- model_obj$model
-    feature_names <- model_obj$feature_names
-    model_type <- model_obj$model_type
-} else {
-    # Fallback for old format
-    model <- model_obj
-    feature_names <- NULL
-    model_type <- "unknown"
-}
+# Load the trained model
+model <- readRDS("OUT/models/best_model_R.rds")
 
 # Load the test data
 test_data <- fread(input_file)
@@ -44,7 +32,7 @@ if ("Id" %in% names(test_data)) {
     ids <- 1:nrow(test_data)
 }
 
-# Remove ID and sales columns for prediction
+# Remove ID columns for prediction
 X_test <- test_data[, !names(test_data) %in% c("Id", "id", "sales"), with = FALSE]
 
 # Encode categorical variables (same as training)
@@ -61,13 +49,16 @@ if ("Coffee_Consumption" %in% names(X_test)) {
     X_test$Coffee_Consumption <- as.numeric(factor(X_test$Coffee_Consumption, levels = c("low", "medium", "high"))) - 1
 }
 
-# Select only the features used during training
-if (!is.null(feature_names)) {
-    # Keep only columns that exist in feature_names
-    X_test <- X_test[, names(X_test) %in% feature_names, with = FALSE]
-    # Reorder columns to match training data
-    X_test <- X_test[, feature_names, with = FALSE]
+# Feature Engineering (same as training)
+add_features <- function(df) {
+    df$Web_Facebook_ratio <- df$Web_GRP / (df$Facebook_GRP + 1)
+    df$TV_Web_ratio <- df$TV_GRP / (df$Web_GRP + 1)
+    df$Total_ad_spend <- df$Web_GRP + df$TV_GRP + df$Facebook_GRP
+    df$Competitor_density <- df$No_of_Competitors / (df$No_of_Big_Cities + 1)
+    df$Internet_adoption <- df$Percent_Internet_Access * df$Percent_Uni_Degrees / 100
+    return(df)
 }
+X_test <- add_features(X_test)
 
 # Handle Missing Values and Infinite Values (same as training)
 for (col in names(X_test)) {
@@ -91,40 +82,15 @@ X_test[is.na(X_test)] <- 0
 X_test[is.nan(as.matrix(X_test))] <- 0
 
 # Make predictions based on model type
-if (model_type == "stacking") {
-    # Stacking ensemble - use base models and meta-model
-    library(xgboost)
-
-    base_models <- model$base_models
-    meta_model_obj <- model$meta_model
-
-    # Get predictions from base models
-    pred_lm <- predict(base_models$lm, X_test)
-    pred_rf <- predict(base_models$rf, X_test)
-
-    dtest <- xgb.DMatrix(data = as.matrix(X_test))
-    pred_xgb <- predict(base_models$xgb, dtest)
-
-    # Create meta-features
-    meta_features <- data.frame(
-        Linear = pred_lm,
-        RandomForest = pred_rf,
-        XGBoost = pred_xgb
-    )
-
-    # Get predictions from meta-model
-    predictions_log <- predict(meta_model_obj, meta_features)
-
-} else if (model_type == "xgboost") {
-    # XGBoost model (native)
-    library(xgboost)
-    dtest <- xgb.DMatrix(data = as.matrix(X_test))
-    predictions_log <- predict(model, dtest)
-} else if (model_type == "rf") {
-    # Random Forest
-    predictions_log <- predict(model, X_test)
+if (is.list(model) && "meta_model" %in% names(model)) {
+    # Stacking ensemble model
+    pred_xgb <- predict(model$base_models$xgb, X_test)
+    pred_rf <- predict(model$base_models$rf, X_test)
+    pred_lm <- predict(model$base_models$lm, X_test)
+    meta_features <- data.frame(XGBoost = pred_xgb, RandomForest = pred_rf, Linear = pred_lm)
+    predictions_log <- predict(model$meta_model, meta_features)
 } else {
-    # Linear model or old format
+    # Single model
     predictions_log <- predict(model, X_test)
 }
 

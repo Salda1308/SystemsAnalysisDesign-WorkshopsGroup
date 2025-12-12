@@ -1,25 +1,87 @@
-# Chocolate Sales Prediction - R-Powered ML Pipeline
+# Chocolate Sales Prediction
 
-## 🎯 Project Overview
+This project is a machine learning pipeline for predicting chocolate sales using Python and R.
 
-3-layer machine learning pipeline for chocolate sales prediction:
-- **Layer 1 (Python)**: Data processing and statistical analysis
-- **Layer 2 (R)**: Model training and selection
-- **Layer 3 (Python API + Web)**: Predictions and visualization
+## Prerequisites
 
-## 🚀 Quick Start
+- Python 3.8 or higher
+- R 4.0 or higher (with Rscript in PATH)
+- Git (optional, for cloning)
+
+## Installation
+
+### 1. Clone or download the repository
+
+```bash
+git clone <repository-url>
+cd chocolate-sales-prediction
+```
+
+### 2. Set up Python environment
+
+#### Option A: Using the setup script (recommended)
+
+```bash
+python setup_environment.py
+```
+
+This will:
+- Create a virtual environment
+- Install Python dependencies
+- Attempt to install R packages
+
+#### Option B: Manual setup
+
+```bash
+# Create virtual environment
+python -m venv chocolate_env
+
+# Activate environment
+# Windows:
+chocolate_env\\Scripts\\activate
+# Linux/Mac:
+source chocolate_env/bin/activate
+
+# Install Python dependencies
+pip install -r requirements.txt
+```
+
+### 3. Install R and packages
+
+Download and install R from: https://cran.r-project.org/
+
+Make sure Rscript is in your PATH.
+
+Install required R packages:
+
+```bash
+# In R console or using Rscript:
+Rscript -e "install.packages(c('caret', 'randomForest', 'xgboost', 'jsonlite', 'data.table'), repos='https://cloud.r-project.org/')"
+```
+
+### 4. Verify installation
+
+```bash
+# Check Python
+python --version
+
+# Check R
+Rscript --version
+```
+
+## Quick Start
 
 ### Run Complete Pipeline
 
 ```bash
+# Activate environment first
+# Windows:
+chocolate_env\\Scripts\\activate
+# Linux/Mac:
+source chocolate_env/bin/activate
+
 python run_pipeline.py
 ```
-
-This will:
-1. Process raw data (`main.py`)
-2. Train and compare models in R
-3. Generate visualizations
-4. Save the best model
 
 ### Start Web Interface
 
@@ -29,106 +91,30 @@ python "Presentation Layer/api.py"
 
 Then open: **http://localhost:8000**
 
-## 📁 Project Structure
+## Troubleshooting
+
+### Common Issues
+
+1. **R not found**: Ensure R is installed and Rscript is in your PATH
+2. **Python version**: Requires Python 3.8+
+3. **Dependencies**: Run `pip install -r requirements.txt` in activated environment
+4. **Virtual environment**: Always activate the environment before running
+
+### On Different Operating Systems
+
+- **Windows**: Use `chocolate_env\\Scripts\\activate`
+- **Linux/Mac**: Use `source chocolate_env/bin/activate`
+- R paths are automatically detected
+
+## Project Structure
 
 ```
-WORKSHOP4/
-├── IN/                          # Input data
-├── OUT/                         # Outputs
-│   ├── processed_data.csv      # Processed dataset
-│   ├── *.png                   # Visualizations
-│   ├── model_comparison_results_R.json
-│   └── models/
-│       └── best_model_R.rds    # Trained R model
-├── Data Processing Layer/
-│   ├── main.py                 # Data processing
-│   └── DataIngestionModule.py
-├── Training Layer/
-│   └── compare_models.R        # R model training
-├── Presentation Layer/
-│   ├── api.py                  # FastAPI server
-│   ├── predict.R               # R prediction script
-│   └── index.html              # Web dashboard
-├── run_pipeline.py             # Master script
-└── docker-compose.yml          # Docker deployment
-```
-
-## 🔬 What Each Layer Does
-
-### Layer 1: Data Processing (Python)
-- Loads raw data from `IN/`
-- Statistical analysis and feature engineering
-- Generates visualizations (heatmaps, boxplots, etc.)
-- Outputs: `OUT/processed_data.csv` + PNG files
-
-### Layer 2: Training (R)
-- Compares 4 models: Linear, Random Forest, GBM, XGBoost
-- Cross-validation with 5 folds
-- Selects best model based on MAE
-- Saves model to `OUT/models/best_model_R.rds`
-
-### Layer 3: Presentation (Python + R)
-- FastAPI serves web interface
-- Calls R for predictions via `predict.R`
-- Web dashboard shows visualizations and results
-- Upload CSV to get predictions
-
-## 🐳 Docker Deployment
-
-```bash
-# Build and run
-docker-compose up --build
-
-# Access
-http://localhost:8000
-```
-
-## 📊 Model Results
-
-The R training script compares:
-1. Linear Regression (baseline)
-2. Random Forest
-3. Gradient Boosting (GBM)
-4. XGBoost ⭐ (typically wins)
-
-Results saved to: `OUT/model_comparison_results_R.json`
-
-## 🔧 Manual Steps
-
-If you want to run each step individually:
-
-```bash
-# Step 1: Process data
-python main.py
-
-# Step 2: Train models in R
-Rscript "Training Layer/compare_models.R"
-
-# Step 3: Start API
-python "Presentation Layer/api.py"
-```
-
-## 📝 API Endpoints
-
-- `GET /` - Web dashboard
-- `GET /health` - API health check
-- `POST /predict` - Get predictions (JSON)
-- `POST /predict/csv` - Download predictions as CSV
-
-## 🛠️ Technologies
-
-- **Python**: pandas, numpy, scikit-learn, matplotlib, seaborn, FastAPI
-- **R**: caret, xgboost, randomForest, gbm, jsonlite
-- **Web**: HTML, CSS, JavaScript
-- **Deployment**: Docker
-
-## 📌 Notes
-
-- All comments in English (student-friendly style)
-- R is the primary training engine
-- Python handles data prep and API
-- Model comparison ensures best algorithm selection
-
----
-
-**Status**: ✅ Production-ready R-powered ML pipeline
+├── main.py                 # Main data processing script
+├── run_pipeline.py         # Complete pipeline runner
+├── setup_environment.py    # Environment setup script
+├── requirements.txt        # Python dependencies
+├── IN/                     # Input data files
+├── OUT/                    # Generated outputs
+├── Data Processing Layer/  # Python data processing modules
+├── Training Layer/         # R model training scripts
+└── Presentation Layer/     # Web API

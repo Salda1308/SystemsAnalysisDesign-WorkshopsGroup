@@ -11,10 +11,41 @@ from pathlib import Path
 BASE_DIR = Path(__file__).parent
 
 # Set R path based on OS
-if platform.system() == "Windows":
-    R_PATH = r"C:\Program Files\R\R-4.5.2\bin\Rscript.exe"
-else:
-    R_PATH = "Rscript"
+# Try to find Rscript in PATH first, fallback to common locations
+r_available = False
+try:
+    result = subprocess.run(["Rscript", "--version"], capture_output=True, text=True, timeout=5)
+    if result.returncode == 0:
+        r_available = True
+        R_PATH = "Rscript"
+except (FileNotFoundError, subprocess.TimeoutExpired):
+    pass
+
+if not r_available:
+    # Try fallback paths
+    if platform.system() == "Windows":
+        fallback_paths = [
+            r"C:\Program Files\R\R-4.5.2\bin\Rscript.exe",
+            r"C:\Program Files\R\R-4.4.1\bin\Rscript.exe",
+            r"C:\Program Files\R\R-4.3.3\bin\Rscript.exe",
+            "Rscript.exe"
+        ]
+    else:
+        fallback_paths = ["Rscript"]
+
+    for path in fallback_paths:
+        try:
+            result = subprocess.run([path, "--version"], capture_output=True, text=True, timeout=5)
+            if result.returncode == 0:
+                R_PATH = path
+                r_available = True
+                break
+        except (FileNotFoundError, subprocess.TimeoutExpired):
+            continue
+
+if not r_available:
+    print("❌ R not found. Please install R from https://cran.r-project.org/")
+    sys.exit(1)
 
 def print_step(step_num, description):
     """Print a formatted step header"""
@@ -28,11 +59,11 @@ def run_command(cmd, description):
     result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
 
     if result.returncode != 0:
-        print(f"[ERROR] {description} failed")
+        print(f"❌ Error: {description} failed")
         print(result.stderr)
         return False
 
-    print(f"[OK] {description} completed successfully")
+    print(f"✓ {description} completed successfully")
     if result.stdout:
         print(result.stdout)
     return True
@@ -42,12 +73,15 @@ def main():
 
     print("\n" + "="*70)
     print("CHOCOLATE SALES PREDICTION - COMPLETE PIPELINE")
-    print("3-Layer Architecture: Python -> R -> Python API")
+    print("3-Layer Architecture: Python → R → Python API")
     print("="*70)
+
+    # Detect Python executable - prefer venv if available
+    python_exe = sys.executable
 
     # Step 1: Data Processing (Python)
     print_step(1, "DATA PROCESSING")
-    if not run_command('python "Training Layer/main.py"', "Data processing"):
+    if not run_command(f'"{python_exe}" main.py', "Data processing"):
         sys.exit(1)
 
     # Step 2: Model Training and Selection (R)
@@ -70,21 +104,21 @@ def main():
     for file in required_files:
         file_path = BASE_DIR / file
         if file_path.exists():
-            print(f"[OK] {file} exists")
+            print(f"✓ {file} exists")
         else:
-            print(f"[ERROR] {file} missing")
+            print(f"❌ {file} missing")
             all_exist = False
 
     if not all_exist:
-        print("\n[ERROR] Pipeline incomplete - some files are missing")
+        print("\n❌ Pipeline incomplete - some files are missing")
         sys.exit(1)
 
     # Step 4: Summary
     print_step(4, "PIPELINE COMPLETE")
-    print("[OK] Data processed successfully")
-    print("[OK] Model trained and saved (R Stacking Ensemble)")
-    print("[OK] Visualizations generated")
-    print("[OK] Model comparison results saved")
+    print("✓ Data processed successfully")
+    print("✓ Model trained and saved (R XGBoost)")
+    print("✓ Visualizations generated")
+    print("✓ Model comparison results saved")
 
     print("\n" + "="*70)
     print("NEXT STEPS:")
