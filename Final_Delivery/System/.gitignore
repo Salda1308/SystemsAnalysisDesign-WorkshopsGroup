@@ -15,7 +15,6 @@ OUT/
 # IDE
 .vscode/
 .idea/
-venv/
 
 # Sistema operativo
 .DS_Store
