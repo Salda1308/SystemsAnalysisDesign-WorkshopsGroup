@@ -88,78 +88,42 @@ calc_mae <- function(pred_log, actual_log) {
 
 # 1. XGBoost (Best single model)
 cat("1. XGBoost... ")
-tryCatch({
-    xgb_grid <- expand.grid(
-        nrounds = 1000, max_depth = 5, eta = 0.01, gamma = 0,
-        colsample_bytree = 0.8, min_child_weight = 1, subsample = 0.8
-    )
-    model_xgb <- train(
-        x = X_train, y = y_train, method = "xgbTree",
-        trControl = train_ctrl, tuneGrid = xgb_grid, verbose = FALSE
-    )
-    pred_xgb <- predict(model_xgb, X_val)
-    results$XGBoost <- calc_mae(pred_xgb, y_val)
-    cat("MAE:", round(results$XGBoost, 2), "\n")
-}, error = function(e) {
-    cat("FAILED (", e$message, ")\n")
-    model_xgb <<- NULL
-    pred_xgb <<- NULL
-})
+xgb_grid <- expand.grid(
+    nrounds = 1000, max_depth = 5, eta = 0.01, gamma = 0,
+    colsample_bytree = 0.8, min_child_weight = 1, subsample = 0.8
+)
+model_xgb <- train(
+    x = X_train, y = y_train, method = "xgbTree",
+    trControl = train_ctrl, tuneGrid = xgb_grid, verbose = FALSE
+)
+pred_xgb <- predict(model_xgb, X_val)
+results$XGBoost <- calc_mae(pred_xgb, y_val)
+cat("MAE:", round(results$XGBoost, 2), "\n")
 
 # 2. Random Forest
 cat("2. Random Forest... ")
-tryCatch({
-    model_rf <- train(
-        x = X_train, y = y_train, method = "rf",
-        trControl = train_ctrl, ntree = 1000, tuneLength = 3
-    )
-    pred_rf <- predict(model_rf, X_val)
-    results$RandomForest <- calc_mae(pred_rf, y_val)
-    cat("MAE:", round(results$RandomForest, 2), "\n")
-}, error = function(e) {
-    cat("FAILED (", e$message, ")\n")
-    model_rf <<- NULL
-    pred_rf <<- NULL
-})
+model_rf <- train(
+    x = X_train, y = y_train, method = "rf",
+    trControl = train_ctrl, ntree = 1000, tuneLength = 3
+)
+pred_rf <- predict(model_rf, X_val)
+results$RandomForest <- calc_mae(pred_rf, y_val)
+cat("MAE:", round(results$RandomForest, 2), "\n")
 
 # 3. Linear Regression (Baseline)
 cat("3. Linear Regression... ")
-tryCatch({
-    model_lm <- train(x = X_train, y = y_train, method = "lm", trControl = train_ctrl)
-    pred_lm <- predict(model_lm, X_val)
-    results$Linear <- calc_mae(pred_lm, y_val)
-    cat("MAE:", round(results$Linear, 2), "\n")
-}, error = function(e) {
-    cat("FAILED (", e$message, ")\n")
-    model_lm <<- NULL
-    pred_lm <<- NULL
-})
+model_lm <- train(x = X_train, y = y_train, method = "lm", trControl = train_ctrl)
+pred_lm <- predict(model_lm, X_val)
+results$Linear <- calc_mae(pred_lm, y_val)
+cat("MAE:", round(results$Linear, 2), "\n")
 
 # 4. Stacking Ensemble (Combines all models for best MAE)
 cat("4. Stacking Ensemble... ")
-tryCatch({
-    # Only create ensemble if we have at least 2 successful models
-    available_preds <- list()
-    if (!is.null(pred_xgb)) available_preds$XGBoost <- pred_xgb
-    if (!is.null(pred_rf)) available_preds$RandomForest <- pred_rf
-    if (!is.null(pred_lm)) available_preds$Linear <- pred_lm
-
-    if (length(available_preds) >= 2) {
-        meta_features <- as.data.frame(available_preds)
-        meta_model <- lm(y_val ~ ., data = meta_features)
-        pred_stack <- predict(meta_model, meta_features)
-        results$Stacking <- calc_mae(pred_stack, y_val)
-        cat("MAE:", round(results$Stacking, 2), "\n")
-    } else {
-        cat("SKIPPED (need at least 2 base models)\n")
-        meta_model <- NULL
-        pred_stack <- NULL
-    }
-}, error = function(e) {
-    cat("FAILED (", e$message, ")\n")
-    meta_model <<- NULL
-    pred_stack <<- NULL
-})
+meta_features <- data.frame(XGBoost = pred_xgb, RandomForest = pred_rf, Linear = pred_lm)
+meta_model <- lm(y_val ~ ., data = meta_features)
+pred_stack <- predict(meta_model, meta_features)
+results$Stacking <- calc_mae(pred_stack, y_val)
+cat("MAE:", round(results$Stacking, 2), "\n")
 
 # Show Results
 cat("\n=================================================================\n")
@@ -183,17 +147,16 @@ cat("=================================================================\n")
 cat("\nGenerating test predictions...\n")
 best_name <- names(sorted)[1]
 
-if (best_name == "Stacking" && !is.null(meta_model)) {
+if (best_name == "Stacking") {
     # For stacking, combine all model predictions
-    available_test_preds <- list()
-    if (!is.null(model_xgb)) available_test_preds$XGBoost <- predict(model_xgb, X_test)
-    if (!is.null(model_rf)) available_test_preds$RandomForest <- predict(model_rf, X_test)
-    if (!is.null(model_lm)) available_test_preds$Linear <- predict(model_lm, X_test)
-    meta_test <- as.data.frame(available_test_preds)
+    pred_xgb_test <- predict(model_xgb, X_test)
+    pred_rf_test <- predict(model_rf, X_test)
+    pred_lm_test <- predict(model_lm, X_test)
+    meta_test <- data.frame(XGBoost = pred_xgb_test, RandomForest = pred_rf_test, Linear = pred_lm_test)
     pred_test_log <- predict(meta_model, meta_test)
-} else if (best_name == "XGBoost" && !is.null(model_xgb)) {
+} else if (best_name == "XGBoost") {
     pred_test_log <- predict(model_xgb, X_test)
-} else if (best_name == "RandomForest" && !is.null(model_rf)) {
+} else if (best_name == "RandomForest") {
     pred_test_log <- predict(model_rf, X_test)
 } else if (best_name == "Linear" && !is.null(model_lm)) {
     pred_test_log <- predict(model_lm, X_test)
@@ -221,28 +184,20 @@ write_json(list(
 
 # Save best model
 model_path <- file.path(models_dir, "best_model_R.rds")
-if (best_name == "Stacking" && !is.null(meta_model)) {
-    # Only save models that were successfully trained
-    base_models_list <- list()
-    if (!is.null(model_xgb)) base_models_list$xgb <- model_xgb
-    if (!is.null(model_rf)) base_models_list$rf <- model_rf
-    if (!is.null(model_lm)) base_models_list$lm <- model_lm
-
+if (best_name == "Stacking") {
     saveRDS(
         list(
             meta_model = meta_model,
-            base_models = base_models_list
+            base_models = list(xgb = model_xgb, rf = model_rf, lm = model_lm)
         ),
         model_path
     )
-} else if (best_name == "XGBoost" && !is.null(model_xgb)) {
+} else if (best_name == "XGBoost") {
     saveRDS(model_xgb, model_path)
-} else if (best_name == "RandomForest" && !is.null(model_rf)) {
+} else if (best_name == "RandomForest") {
     saveRDS(model_rf, model_path)
-} else if (best_name == "Linear" && !is.null(model_lm)) {
-    saveRDS(model_lm, model_path)
 } else {
-    warning("Could not save best model: model object is NULL")
+    saveRDS(model_lm, model_path)
 }
 
 cat("\n[OK] Training complete! Results saved to", out_dir, "\n")
