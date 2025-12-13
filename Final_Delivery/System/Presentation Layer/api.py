@@ -41,6 +41,8 @@ R_EXECUTABLE = r"C:\Program Files\R\R-4.5.2\bin\Rscript.exe" if platform.system(
 
 # Mount static files
 app.mount("/static", StaticFiles(directory=str(BASE_DIR / "OUT")), name="static")
+# Serve presentation assets (images, CSS, JS)
+app.mount("/assets", StaticFiles(directory=str(PRESENTATION_DIR)), name="assets")
 
 @app.on_event("startup")
 async def startup_event():
